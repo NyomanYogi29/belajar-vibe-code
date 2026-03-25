@@ -1,7 +1,8 @@
 import { UserRepository } from '../repository/user-repository.ts'
+import type { RegisterDTO, LoginDTO } from '../contracts/user-contract.ts'
 
 export class UserService {
-  static async registerUser(payload: any) {
+  static async registerUser(payload: RegisterDTO) {
     const { name, email, password } = payload
 
     // 1. Pengecekan apakah user aktif dengan email tersebut sudah ada
@@ -25,7 +26,7 @@ export class UserService {
     return 'OK'
   }
 
-  static async loginUser(payload: any) {
+  static async loginUser(payload: LoginDTO) {
     const { email, password } = payload
 
     // 1. Cari user yang aktif
