@@ -37,13 +37,13 @@ export class UserService {
       userId: user.id,
       sessionId,
       exp: Math.floor(Date.now() / 1000) + this.ACCESS_TOKEN_EXPIRE
-    }, this.JWT_SECRET)
+    }, this.JWT_SECRET, 'HS256')
 
     const refreshToken = await sign({
       userId: user.id,
       sessionId,
       exp: Math.floor(Date.now() / 1000) + this.REFRESH_TOKEN_EXPIRE
-    }, this.JWT_SECRET)
+    }, this.JWT_SECRET, 'HS256')
 
     await SessionRepository.setSession(user.id, sessionId, {
       refreshToken,
@@ -58,7 +58,7 @@ export class UserService {
     const { refreshToken } = payload
     
     try {
-      const decoded = await verify(refreshToken, this.JWT_SECRET) as any
+      const decoded = await verify(refreshToken, this.JWT_SECRET, 'HS256') as any
       const { userId, sessionId } = decoded
 
       const session = await SessionRepository.getSession(userId, sessionId)
@@ -74,13 +74,13 @@ export class UserService {
         userId,
         sessionId: newSessionId,
         exp: Math.floor(Date.now() / 1000) + this.ACCESS_TOKEN_EXPIRE
-      }, this.JWT_SECRET)
+      }, this.JWT_SECRET, 'HS256')
 
       const newRefreshToken = await sign({
         userId,
         sessionId: newSessionId,
         exp: Math.floor(Date.now() / 1000) + this.REFRESH_TOKEN_EXPIRE
-      }, this.JWT_SECRET)
+      }, this.JWT_SECRET, 'HS256')
 
       await SessionRepository.setSession(userId, newSessionId, {
         refreshToken: newRefreshToken,
