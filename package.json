@@ -13,18 +13,17 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/pg": "^8.20.0",
-    "@types/redis": "^4.0.11",
     "drizzle-kit": "^0.31.10"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.7.6",
+    "@neondatabase/serverless": "^1.0.2",
+    "@upstash/redis": "^1.37.0",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.12.9",
-    "ioredis": "^5.10.1",
-    "pg": "^8.20.0",
     "zod": "^4.3.6"
   }
 }
