@@ -20,3 +20,10 @@ export const users = pgTable('users', {
 }, (table) => ({
   uniqueEmailDeletedAt: unique().on(table.email, table.deletedAt),
 }))
+
+export const sessions = pgTable('sessions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('userId').notNull().references(() => users.id),
+  token: varchar('token', { length: 255 }).notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+})
