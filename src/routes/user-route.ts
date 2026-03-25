@@ -12,6 +12,7 @@ const registerSchema = z.object({
 })
 
 userRoute.post('/register', zValidator('json', registerSchema), async (c) => {
+  // ... existing register code ...
   const payload = c.req.valid('json')
 
   try {
@@ -26,6 +27,34 @@ userRoute.post('/register', zValidator('json', registerSchema), async (c) => {
         message: 'User already exists',
         data: 'ERROR',
       }, 400)
+    }
+    return c.json({
+      message: err.message || 'Internal server error',
+      data: 'ERROR',
+    }, 500)
+  }
+})
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
+})
+
+userRoute.post('/login', zValidator('json', loginSchema), async (c) => {
+  const payload = c.req.valid('json')
+
+  try {
+    const token = await UserService.loginUser(payload)
+    return c.json({
+      message: 'Login berhasil',
+      data: token,
+    })
+  } catch (err: any) {
+    if (err.message === 'Email atau password salah') {
+      return c.json({
+        message: 'Email atau password salah',
+        data: 'ERROR',
+      }, 401)
     }
     return c.json({
       message: err.message || 'Internal server error',

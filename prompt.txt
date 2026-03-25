@@ -4,44 +4,40 @@ Gunakan format gaya penamaan: Camel Case
 
 Isi dari perencanaannya sebagai berikut:
 
-Enum:
-
-role: MURID | GURU | ADMIN
-
-1. Buat tabel users:
+1. Buat tabel sessions:
 id uuid primary key
-name varchar(255) not null
-email varchar(255) not null unique
-password varchar(255) not null
-tryoutAttempt int default 0 not null
-totalPoint int default 0 not null
-coinBalance int default 0 not null
-role enum('MURID', 'GURU', 'ADMIN') default 'MURID' not null
-isActive boolean default true not null
-blockedUntil timestamp null
-deletedAt timestamp null
+userId uuid not null (FK ke tabel users)
+token varchar(255) not null (token uuid untuk user yang sedang login)
 createdAt timestamp default current_timestamp not null
-updatedAt timestamp default current_timestamp not null
-avatar text null
-unique(email, deletedAt) // untuk user yang menghapus email nya, dan ingin kembali menggunakan email tersebut di kemudian hari
 
-Buatkan API untuk registrasi user baru:
+Buatkan API untuk login user:
 
+POST /api/v1/auth/login
+
+body:
 {
-    "name": "John Doe",
     "email": "[EMAIL_ADDRESS]",
     "password": "password",
 }
 
 response OK:
 {
-    "message": "User created successfully",
-    "data": "OK"
+    "message": "Login berhasil",
+    "data": "token"
 }
 
 response Error:
 {
-    "message": "User already exists",
+    "message": "Email atau password salah",
     "data": "ERROR"
 }
 
+Struktur folder di dalam src harus ada 
+- routes : routing 
+- services : business logic
+
+Struktur penamaan file:
+- routes : user-route.ts
+- services : user-service.ts
+
+Jelaskan tahapan tahapan yang harus dilakukan untuk mengimplementasikan fitur ini. Anggap nanti yang mengimplementasikan adalah junior programmer atau model AI model yang lebih murah.
