@@ -1,5 +1,5 @@
 import { UserRepository } from '../repository/user-repository.ts'
-import type { RegisterDTO, LoginDTO } from '../contracts/user-contract.ts'
+import type { RegisterDTO, LoginDTO } from '../contracts/index.ts'
 
 export class UserService {
   static async registerUser(payload: RegisterDTO) {
