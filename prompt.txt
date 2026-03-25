@@ -1,0 +1,47 @@
+buatkan issue.md yang berisi perencanaan untuk nanti diimplementasikan oleh junior programmer atau AI model yang lebih murah.
+
+Gunakan format gaya penamaan: Camel Case
+
+Isi dari perencanaannya sebagai berikut:
+
+Enum:
+
+role: MURID | GURU | ADMIN
+
+1. Buat tabel users:
+id uuid primary key
+name varchar(255) not null
+email varchar(255) not null unique
+password varchar(255) not null
+tryoutAttempt int default 0 not null
+totalPoint int default 0 not null
+coinBalance int default 0 not null
+role enum('MURID', 'GURU', 'ADMIN') default 'MURID' not null
+isActive boolean default true not null
+blockedUntil timestamp null
+deletedAt timestamp null
+createdAt timestamp default current_timestamp not null
+updatedAt timestamp default current_timestamp not null
+avatar text null
+unique(email, deletedAt) // untuk user yang menghapus email nya, dan ingin kembali menggunakan email tersebut di kemudian hari
+
+Buatkan API untuk registrasi user baru:
+
+{
+    "name": "John Doe",
+    "email": "[EMAIL_ADDRESS]",
+    "password": "password",
+}
+
+response OK:
+{
+    "message": "User created successfully",
+    "data": "OK"
+}
+
+response Error:
+{
+    "message": "User already exists",
+    "data": "ERROR"
+}
+

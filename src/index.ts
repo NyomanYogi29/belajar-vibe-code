@@ -3,10 +3,14 @@ import { logger } from 'hono/logger'
 import { db } from './db/index.ts'
 import { redis } from './lib/redis.ts'
 import { users } from './db/schema.ts'
+import { userRoute } from './routes/user-route.ts'
 
 const app = new Hono()
 
 app.use('*', logger())
+
+// Routes
+app.route('/api/v1/auth', userRoute)
 
 // Base route
 app.get('/', (c) => {
