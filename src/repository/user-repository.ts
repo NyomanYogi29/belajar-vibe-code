@@ -12,7 +12,7 @@ export class UserRepository {
     return result[0] || null
   }
 
-  static async createUser(data: any) {
+  static async createUser(data: typeof users.$inferInsert) {
     return await db.insert(users).values(data)
   }
 
