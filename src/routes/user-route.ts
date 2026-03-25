@@ -1,18 +1,11 @@
 import { Hono } from 'hono'
-import { z } from 'zod'
 import { zValidator } from '@hono/zod-validator'
 import { UserService } from '../services/user-service.ts'
+import { registerSchema, loginSchema } from '../contracts/user-contract.ts'
 
 const userRoute = new Hono()
 
-const registerSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  password: z.string().min(8),
-})
-
 userRoute.post('/register', zValidator('json', registerSchema), async (c) => {
-  // ... existing register code ...
   const payload = c.req.valid('json')
 
   try {
@@ -33,11 +26,6 @@ userRoute.post('/register', zValidator('json', registerSchema), async (c) => {
       data: 'ERROR',
     }, 500)
   }
-})
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
 })
 
 userRoute.post('/login', zValidator('json', loginSchema), async (c) => {

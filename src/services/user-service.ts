@@ -1,20 +1,13 @@
-import { db } from '../db/index.ts'
-import { users, sessions } from '../db/schema.ts'
-import { and, eq, isNull } from 'drizzle-orm'
+import { UserRepository } from '../repository/user-repository.ts'
 
 export class UserService {
   static async registerUser(payload: any) {
-    // ... no changes here ...
     const { name, email, password } = payload
 
     // 1. Pengecekan apakah user aktif dengan email tersebut sudah ada
-    const existingUser = await db
-      .select()
-      .from(users)
-      .where(and(eq(users.email, email), isNull(users.deletedAt)))
-      .limit(1)
+    const existingUser = await UserRepository.findActiveUserByEmail(email)
 
-    if (existingUser.length > 0) {
+    if (existingUser) {
       throw new Error('User already exists')
     }
 
@@ -22,7 +15,7 @@ export class UserService {
     const hashedPassword = await Bun.password.hash(password)
 
     // 3. Simpan user baru ke database
-    await db.insert(users).values({
+    await UserRepository.createUser({
       name,
       email,
       password: hashedPassword,
@@ -36,18 +29,14 @@ export class UserService {
     const { email, password } = payload
 
     // 1. Cari user yang aktif
-    const user = await db
-      .select()
-      .from(users)
-      .where(and(eq(users.email, email), isNull(users.deletedAt)))
-      .limit(1)
+    const user = await UserRepository.findActiveUserByEmail(email)
 
-    if (user.length === 0) {
+    if (!user) {
       throw new Error('Email atau password salah')
     }
 
     // 2. Verifikasi password
-    const isPasswordValid = await Bun.password.verify(password, user[0]!.password)
+    const isPasswordValid = await Bun.password.verify(password, user.password)
 
     if (!isPasswordValid) {
       throw new Error('Email atau password salah')
@@ -57,10 +46,7 @@ export class UserService {
     const token = crypto.randomUUID()
 
     // 4. Simpan session
-    await db.insert(sessions).values({
-      userId: user[0]!.id,
-      token: token,
-    })
+    await UserRepository.createSession(user.id, token)
 
     return token
   }
