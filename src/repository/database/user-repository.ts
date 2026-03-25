@@ -1,5 +1,5 @@
-import { db } from '../db/index.ts'
-import { users, sessions } from '../db/schema.ts'
+import { db } from '../../db/index.ts'
+import { users } from '../../db/schema.ts'
 import { and, eq, isNull } from 'drizzle-orm'
 
 export class UserRepository {
@@ -14,12 +14,5 @@ export class UserRepository {
 
   static async createUser(data: typeof users.$inferInsert) {
     return await db.insert(users).values(data)
-  }
-
-  static async createSession(userId: string, token: string) {
-    return await db.insert(sessions).values({
-      userId,
-      token,
-    })
   }
 }

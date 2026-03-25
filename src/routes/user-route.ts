@@ -1,9 +1,12 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { UserService } from '../services/user-service.ts'
-import { registerSchema, loginSchema } from '../contracts/user-contract.ts'
+import { registerSchema, loginSchema, refreshTokenSchema } from '../contracts/user-contract.ts'
+import { jwt } from 'hono/jwt'
 
 const userRoute = new Hono()
+
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecret'
 
 userRoute.post('/register', zValidator('json', registerSchema), async (c) => {
   const payload = c.req.valid('json')
@@ -30,12 +33,14 @@ userRoute.post('/register', zValidator('json', registerSchema), async (c) => {
 
 userRoute.post('/login', zValidator('json', loginSchema), async (c) => {
   const payload = c.req.valid('json')
+  const ipAddress = c.req.header('x-forwarded-for') || '127.0.0.1'
+  const userAgent = c.req.header('user-agent') || 'unknown'
 
   try {
-    const token = await UserService.loginUser(payload)
+    const tokens = await UserService.loginUser(payload, ipAddress, userAgent)
     return c.json({
       message: 'Login berhasil',
-      data: token,
+      data: tokens,
     })
   } catch (err: any) {
     if (err.message === 'Email atau password salah') {
@@ -49,6 +54,34 @@ userRoute.post('/login', zValidator('json', loginSchema), async (c) => {
       data: 'ERROR',
     }, 500)
   }
+})
+
+userRoute.post('/refresh-token', zValidator('json', refreshTokenSchema), async (c) => {
+  const payload = c.req.valid('json')
+  const ipAddress = c.req.header('x-forwarded-for') || '127.0.0.1'
+  const userAgent = c.req.header('user-agent') || 'unknown'
+
+  try {
+    const tokens = await UserService.refreshToken(payload, ipAddress, userAgent)
+    return c.json({
+      message: 'Token berhasil di-refresh',
+      data: tokens,
+    })
+  } catch (err: any) {
+    return c.json({
+      message: err.message || 'Internal server error',
+      data: 'ERROR',
+    }, 401)
+  }
+})
+
+// Protected root endpoint
+userRoute.get('/', jwt({ secret: JWT_SECRET, alg: 'HS256' }), (c) => {
+  const payload = c.get('jwtPayload')
+  return c.json({
+    message: 'Welcome to protected root!',
+    user: payload,
+  })
 })
 
 export { userRoute }

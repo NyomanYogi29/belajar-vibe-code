@@ -4,40 +4,6 @@ Gunakan format gaya penamaan: Camel Case
 
 Isi dari perencanaannya sebagai berikut:
 
-1. Buat tabel sessions:
-id uuid primary key
-userId uuid not null (FK ke tabel users)
-token varchar(255) not null (token uuid untuk user yang sedang login)
-createdAt timestamp default current_timestamp not null
-
-Buatkan API untuk login user:
-
-POST /api/v1/auth/login
-
-body:
-{
-    "email": "[EMAIL_ADDRESS]",
-    "password": "password",
-}
-
-response OK:
-{
-    "message": "Login berhasil",
-    "data": "token"
-}
-
-response Error:
-{
-    "message": "Email atau password salah",
-    "data": "ERROR"
-}
-
-Struktur folder di dalam src harus ada 
-- routes : routing 
-- services : business logic
-
-Struktur penamaan file:
-- routes : user-route.ts
-- services : user-service.ts
+1. 
 
 Jelaskan tahapan tahapan yang harus dilakukan untuk mengimplementasikan fitur ini. Anggap nanti yang mengimplementasikan adalah junior programmer atau model AI model yang lebih murah.
